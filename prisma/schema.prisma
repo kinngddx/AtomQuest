@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+
+
+
+
+
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+  ADMIN
+}
+
+enum UomType {
+  NUMERIC_MIN
+  NUMERIC_MAX
+  TIMELINE
+  ZERO
+}
+
+enum GoalStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  LOCKED
+}
+
+enum CheckInStatus {
+  NOT_STARTED
+  ON_TRACK
+  COMPLETED
+}
+
+enum ApprovalAction {
+  APPROVED
+  REJECTED
+  RETURNED
+}
+
+model User {
+  id         String   @id
+  email      String   @unique
+  name       String
+  role       Role     @default(EMPLOYEE)
+  department String?
+  managerId  String?
+  manager    User?    @relation("Reports", fields: [managerId], references: [id])
+  reports    User[]   @relation("Reports")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  goals           Goal[]
+  sharedAssignments SharedGoalAssignment[]
+  checkIns        CheckIn[]
+  approvals       Approval[]
+  auditLogs       AuditLog[]
+}
+
+model Goal {
+  id           String     @id @default(cuid())
+  title        String
+  description  String?
+  thrustArea   String
+  uomType      UomType
+  target       Float
+  weightage    Float
+  status       GoalStatus @default(DRAFT)
+  cycleYear    Int
+  isShared     Boolean    @default(false)
+  parentGoalId String?
+  lockedAt     DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  ownerId  String
+  owner    User   @relation(fields: [ownerId], references: [id])
+
+  parentGoal   Goal?  @relation("SharedGoals", fields: [parentGoalId], references: [id])
+  sharedCopies Goal[] @relation("SharedGoals")
+
+  sharedAssignments SharedGoalAssignment[]
+  checkIns          CheckIn[]
+  approvals         Approval[]
+  auditLogs         AuditLog[]
+}
+
+model SharedGoalAssignment {
+  id        String   @id @default(cuid())
+  goalId    String
+  userId    String
+  weightage Float
+  createdAt DateTime @default(now())
+
+  goal Goal @relation(fields: [goalId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([goalId, userId])
+}
+
+model CheckIn {
+  id             String        @id @default(cuid())
+  goalId         String
+  userId         String
+  quarter        Int
+  year           Int
+  achievement    Float?
+  completionDate DateTime?
+  status         CheckInStatus @default(NOT_STARTED)
+  managerComment String?
+  managerId      String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  goal Goal @relation(fields: [goalId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([goalId, userId, quarter, year])
+}
+
+model Approval {
+  id        String         @id @default(cuid())
+  goalId    String
+  managerId String
+  action    ApprovalAction
+  comment   String?
+  createdAt DateTime       @default(now())
+
+  goal    Goal @relation(fields: [goalId], references: [id])
+  manager User @relation(fields: [managerId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  goalId    String?
+  userId    String
+  action    String
+  oldValue  Json?
+  newValue  Json?
+  createdAt DateTime @default(now())
+
+  goal Goal? @relation(fields: [goalId], references: [id])
+  user User  @relation(fields: [userId], references: [id])
+}
+
+model Cycle {
+  id       String   @id @default(cuid())
+  year     Int
+  phase    String
+  isActive Boolean  @default(false)
+  opensAt  DateTime
+  closesAt DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([year, phase])
+}
