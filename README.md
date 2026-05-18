@@ -13,7 +13,7 @@
 
 ## 🔗 Live Demo
 
-**Portal URL:** `https://your-app.vercel.app`
+**Portal URL:** `https://atom-quest-sable-seven.vercel.app/sign-in`
 
 ### Demo Login Credentials
 
