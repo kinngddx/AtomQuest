@@ -84,3 +84,4 @@ export default async function AdminDashboardPage() {
     <AdminDashboardClient stats={stats} auditLogs={auditLogs} />
   );
 }
+
