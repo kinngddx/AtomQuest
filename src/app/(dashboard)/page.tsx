@@ -16,7 +16,7 @@ export default async function RootPage() {
           id: clerkUser.id,
           email: clerkUser.emailAddresses[0]?.emailAddress || "",
           name: `${clerkUser.firstName} ${clerkUser.lastName}`.trim(),
-          role: (clerkUser.publicMetadata?.role as string) || "EMPLOYEE",
+          role: (clerkUser.publicMetadata?.role as any) || "EMPLOYEE",
           department: (clerkUser.publicMetadata?.department as string) || "General",
         },
       });
