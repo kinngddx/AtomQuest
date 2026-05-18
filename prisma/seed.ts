@@ -14,9 +14,9 @@ async function main() {
     where: { email: "admin@goaltrack.com" },
     update: {},
     create: {
-      id: "user_demo_admin", // Replace with actual Clerk ID
+      id: "user_3DtA7tunGR1xIc3ai0Z9kfF7ugm", // Replace with actual Clerk ID
       email: "admin@goaltrack.com",
-      name: "Admin User",
+      name: "Admin",
       role: "ADMIN",
       department: "HR",
     },
@@ -26,9 +26,9 @@ async function main() {
     where: { email: "manager@goaltrack.com" },
     update: {},
     create: {
-      id: "user_demo_manager", // Replace with actual Clerk ID
+      id: "user_3DtABBuXbFxRimte28eKPvjSZua", // Replace with actual Clerk ID
       email: "manager@goaltrack.com",
-      name: "Sarah Manager",
+      name: "Manager",
       role: "MANAGER",
       department: "Sales",
     },
@@ -38,9 +38,9 @@ async function main() {
     where: { email: "employee@goaltrack.com" },
     update: {},
     create: {
-      id: "user_demo_employee", // Replace with actual Clerk ID
+      id: "user_3DtAENJHExoc79gcMq46N0dd5G3", // Replace with actual Clerk ID
       email: "employee@goaltrack.com",
-      name: "John Employee",
+      name: "Employee",
       role: "EMPLOYEE",
       department: "Sales",
       managerId: manager.id,
